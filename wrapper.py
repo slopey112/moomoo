@@ -6,13 +6,15 @@ from subprocess import run
 
 class Game:
 	screenshot_id = 0
+	directory = ""
 
-	def __init__(self, name):
+	def __init__(self, name, directory):
 		# Instantiate variables
 		self.name = name
 		self.driver = webdriver.Firefox()
 		self.height = self.driver.get_window_size()["height"]
 		self.width = self.driver.get_window_size()["width"]
+		Game.directory = directory
 
 		# Instantiate game
 		self.driver.get("https://www.moomoo.io")
@@ -85,7 +87,7 @@ class Game:
 
 	def screenshot(self):
 		Game.screenshot_id += 1
-		self.driver.save_screenshot("/home/slopey/Documents/code/moomoo/screenshots/{}.png".format(Game.screenshot_id))
+		self.driver.save_screenshot("{}/screenshots/{}.png".format(Game.directory, Game.screenshot_id))
 		return Game.screenshot_id
 
 
@@ -96,7 +98,22 @@ class Game:
 	
 	def close(self):
 		self.driver.close()
-		run(["rm", "/home/howardp/Documents/Code/moomoo/screenshots/*"])
+	
+
+	def get_food(self):
+		return self.driver.find_element_by_id("foodDisplay").text
+
+
+	def get_wood(self):
+		return self.driver.find_element_by_id("woodDisplay").text
+
+
+	def get_stone(self):
+		return self.driver.find_element_by_id("stoneDisplay").text
+
+
+	def get_score(self):
+		return self.driver.find_element_by_id("scoreDisplay").text
 
 
 def main():
