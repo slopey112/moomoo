@@ -34,9 +34,9 @@ class Model:
 					cv2.rectangle(img, pt, (pt[0] + self.w, pt[1] + self.h), (0, 0, 255), 2)
 					pivot = pt
 					points.append(pt)
-		cv2.imshow("img", img)
-		cv2.waitKey(0)
-		time.sleep(5)
-		cv2.destroyAllWindows()
+		# cv2.imshow("img", img)
+		# cv2.waitKey(0)
+		# time.sleep(5)
+		# cv2.destroyAllWindows()
 		return points
 

@@ -101,19 +101,23 @@ class Game:
 	
 
 	def get_food(self):
-		return self.driver.find_element_by_id("foodDisplay").text
+		return int(self.driver.find_element_by_id("foodDisplay").text)
 
 
-	def get_wood(self):
-		return self.driver.find_element_by_id("woodDisplay").text
+	def get_tree(self):
+		return int(self.driver.find_element_by_id("woodDisplay").text)
 
 
 	def get_stone(self):
-		return self.driver.find_element_by_id("stoneDisplay").text
+		return int(self.driver.find_element_by_id("stoneDisplay").text)
 
 
 	def get_score(self):
-		return self.driver.find_element_by_id("scoreDisplay").text
+		return int(self.driver.find_element_by_id("scoreDisplay").text)
+	
+
+	def heal(self):
+		ActionChains(self.driver).send_keys(["q", Keys.SPACE]).send_keys("1").perform()
 
 
 def main():
