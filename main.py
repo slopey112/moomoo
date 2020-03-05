@@ -4,16 +4,17 @@ from color import get_heal
 from time import sleep
 from math import atan, pi
 import datetime
+import threading
 
-directory = "/home/slopey/Documents/code/moomoo"
+directory = "/home/howardp/Documents/Code/moomoo"
 g = Game("fatty", directory)
 m = {
-		"tree": Model("tree_res_b", directory),
+		"tree": Model("tree_res_s", directory),
 		"food": Model("food", directory)
 		}
 
 
-def explore(r, func):
+def explore(r):
 	stop_time = 1
 	axis = 0
 	pts = m[r].scan(str(g.screenshot()))
@@ -21,7 +22,6 @@ def explore(r, func):
 	while not pts:
 		segment = round(stop_time / 2)
 		for i in range(segment):
-			func()
 			g.move(axis)
 			sleep(2)
 			g.stop()
@@ -51,7 +51,7 @@ def auto(r):
 	g.move(axis)
 	g.set_axis(axis)
 	time = int(datetime.datetime.now().strftime("%s"))
-	while resource == r_initial and int(datetime.datetime.now().strftime("%s")) - time < 5:
+	while resource == r_initial and int(datetime.datetime.now().strftime("%s")) - time < 2:
 		resource = g.get_tree() if r == "tree" else (g.get_food() if r == "food" else g.get_stone())
 	g.stop()
 
@@ -97,24 +97,54 @@ def get_axis(pt, origin):
 
 def naive_algo():
 	def f():
-		if g.get_food() >= 10 and get_heal("{}/screenshots/{}.png".format(directory, str(g.screenshot()))):
-			g.heal()
+		while True:
+			if g.get_food() >= 10 and get_heal("{}/screenshots/{}.png".format(directory, str(g.screenshot()))):
+				print("Healing...")
+				g.heal()
+	
+
+	def upgrade():
+		age_2 = False
+		age_3 = False
+		while True:
+			age = g.get_age()
+			if age == 2 and not age_2:
+				age_2 = True
+				g.upgrade("8")
+			elif age == 3 and not age_3:
+				age_3 = True
+				g.upgrade("17")
+			elif age == 4:
+				break
+			sleep(1)
 
 
-	tree_init = g.get_tree()
+	t = threading.Thread(target=f)
+	t2 = threading.Thread(target=upgrade)
+	t.start()
+	t2.start()
 	food_init = g.get_food()
+	tree_init = g.get_tree()
 	while True:
-		f()
-		tree = g.get_tree()
 		food = g.get_food()
-		if food < 100 and food == food_init:
-			explore("food", f)
+		tree = g.get_tree()
+		if food < 500 and (food > food_init or tree > tree_init):
+			food_init = food
+			tree_init = tree
+			sleep(1)
+			continue
+		if food < 500 and food <= food_init:
+			food_init = g.get_food()
+			print("Exploring food")
+			explore("food")
+			print("Food found")
 			auto("food")
 		elif tree == tree_init:
-			explore("tree", f)
+			tree_init = g.get_tree()
+			print("Exploring tree")
+			explore("tree")
+			print("Tree found")
 			auto("tree")
-		tree_init = tree
-		food_init = food
 
 
 while True:

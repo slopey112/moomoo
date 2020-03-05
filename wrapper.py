@@ -23,6 +23,7 @@ class Game:
 		self.driver.find_element_by_id("nameInput").send_keys(name)
 		self.driver.find_element_by_id("enterGame").click()
 		ActionChains(self.driver).key_down("e").perform()
+		self.driver.execute_script("document.getElementById('chatButton').style.display = 'none';")
 	
 
 	def set_axis(self, axis):
@@ -118,6 +119,14 @@ class Game:
 
 	def heal(self):
 		ActionChains(self.driver).send_keys(["q", Keys.SPACE]).send_keys("1").perform()
+
+
+	def get_age(self):
+		return int(self.driver.find_element_by_id("ageText").text.split(" ")[1])
+
+
+	def upgrade(self, i):
+		self.driver.find_element_by_id("upgradeItem{}".format(i)).click()
 
 
 def main():
